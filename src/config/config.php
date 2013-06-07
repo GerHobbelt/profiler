@@ -1,7 +1,7 @@
 <?php
 
 return array(
-	
+
 	/*
 	| -----------------------------------------------------------------------------
 	| Enable profiler
@@ -15,7 +15,7 @@ return array(
 	|
 	*/
 
-	'enabled' => null,
+	'enabled' => false,
 
 	/*
 	| -----------------------------------------------------------------------------
@@ -23,7 +23,7 @@ return array(
 	| -----------------------------------------------------------------------------
 	|
 	| This password is required to enable the profiler on selected environments.
-	| 
+	|
 	| You should change it after installation.
 	|
 	*/
@@ -36,7 +36,7 @@ return array(
 	| -----------------------------------------------------------------------------
 	|
 	| The profiler can be enabled by running directing your browser to:
-	| /_profiler/enable/{password}
+	| /_profiler/toggle/{password}
 	|
 	| The following environments will require a password to be given.
 	|

@@ -7,6 +7,11 @@ class ProfilerServiceProvider extends ServiceProvider {
 
 	const SESSION_HASH = '_profiler';
 
+	public function boot()
+	{
+		$this->package('loic-sharma/profiler', null, __DIR__.'/../');
+	}
+
 	/**
 	 * Register the service provider.
 	 *
@@ -14,8 +19,6 @@ class ProfilerServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->package('loic-sharma/profiler', null, __DIR__.'/../');
-
 		$this->registerProfiler();
 
 		$this->registerProfilerLoggerEvent();
@@ -33,7 +36,7 @@ class ProfilerServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function registerProfiler()
-	{	
+	{
 		$this->app['profiler'] = $this->app->share(function($app)
 		{
 			$startTime = null;
@@ -118,31 +121,20 @@ class ProfilerServiceProvider extends ServiceProvider {
 
 		$this->app->booting(function($app) use ($provider)
 		{
-			$app['router']->get('/_profiler/enable/{password?}', function($password = null) use ($app, $provider)
+			// Toggle profiler
+			$app['router']->get('/_profiler/toggle/{password?}', function($password = null) use ($app, $provider)
 			{
 				$config = $app['config'];
 				$password_required = in_array($app['env'], $config->get('profiler::require_password'));
 
 				if( ! $password_required or ($password_required and $password === $config->get('profiler::password')))
 				{
-					$app['session']->put($provider::SESSION_HASH, true);
+					$state = $app['session']->get($provider::SESSION_HASH) ? false : true;
+
+					$app['session']->put($provider::SESSION_HASH, $state);
 				}
 
-				return $app['redirect']->to('/');
-			});
-
-			$app['router']->get('/_profiler/disable', function() use ($app, $provider)
-			{
-				$app['session']->put($provider::SESSION_HASH, false);
-
-				return $app['redirect']->to('/');
-			});
-			
-			$app['router']->get('/_profiler/reset', function() use ($app, $provider)
-			{
-				$app['session']->forget($provider::SESSION_HASH);
-
-				return $app['redirect']->to('/');
+				return $app['redirect']->to($app['url']->previous());
 			});
 		});
 	}
