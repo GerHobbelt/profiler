@@ -1,11 +1,11 @@
 {
-    "name": "loic-sharma/profiler",
+    "name": "paulboco/profiler",
     "description": "A PHP 5.3 profiler based off of Laravel 3's Anbu.",
     "keywords": ["profiler", "laravel", "anbu"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Loic Sharma"
+            "name": "Paulboco"
         }
     ],
     "require": {
