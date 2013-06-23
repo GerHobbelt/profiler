@@ -82,7 +82,7 @@
 								<td><?php echo $key ?></td>
 								<td>
 									<?php if (is_array($value)): ?>
-										<pre><?php print_r($value, true) ?></pre>
+										<pre><?php echo print_r($value, true) ?></pre>
 									<?php else: ?>
 										<?php echo $value ?>
 									<?php endif ?>
