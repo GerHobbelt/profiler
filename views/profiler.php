@@ -22,7 +22,7 @@
 						</tr>
 					</table>
 				<?php else: ?>
-					<span class="anbu-empty">There are no log entries.</span>				
+					<span class="anbu-empty">There are no log entries.</span>
 				<?php endif; ?>
 			</div>
 
@@ -63,10 +63,38 @@
 						<td><pre><?php echo $timer->getElapsedTime(); ?>ms</pre></td>
 						<td>&nbsp;</td>
 					</tr>
-					
+
 					<?php endforeach; ?>
 				</table>
 			</div>
+
+			<div class="anbu-tab-pane anbu-table anbu-session">
+				<?php $session = Session::all() ?>
+
+				<?php if ( ! empty($session)): ?>
+					<table>
+						<tr>
+							<th>Key</th>
+							<th>Value</th>
+						</tr>
+						<?php foreach ($session as $key => $value): ?>
+							<tr>
+								<td><?php echo $key ?></td>
+								<td>
+									<?php if (is_array($value)): ?>
+										<pre><?php print_r($value, true) ?></pre>
+									<?php else: ?>
+										<?php echo $value ?>
+									<?php endif ?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</table>
+				<?php else: ?>
+					<span class="anbu-empty">There are no session entries.</span>
+				<?php endif ?>
+			</div>
+
 			<div class="anbu-tab-pane anbu-table anbu-filecount">
 				<table>
 					<tr>
@@ -79,26 +107,27 @@
 						<td><pre><?php echo $file['size']?></pre></td>
 						<td>&nbsp;</td>
 					</tr>
-					
+
 					<?php endforeach; ?>
 				</table>
-			</div>			
+			</div>
 		</div>
 	</div>
 
 	<ul id="anbu-open-tabs" class="anbu-tabs">
 		<li><a data-anbu-tab="anbu-log" class="anbu-tab" href="#">Log <span class="anbu-count"><?php echo count($logger->getLogs()); ?></span></a></li>
 		<li>
-			<a data-anbu-tab="anbu-sql" class="anbu-tab" href="#">SQL 
+			<a data-anbu-tab="anbu-sql" class="anbu-tab" href="#">SQL
 				<span class="anbu-count"><?php echo count($logger->getQueries()); ?></span>
 				<?php if(count($logger->getQueries()) > 0): ?>
 					<span class="anbu-count"><?php echo array_sum(array_map(function($q) { return $q['time']; }, $logger->getQueries())); ?>ms</span>
 				<?php endif; ?>
 			</a>
 		</li>
-		<li><a class="anbu-tab" data-anbu-tab="anbu-checkpoints">Time <span class="anbu-count"><?php echo $profiler->getLoadTime(); ?>ms</span></a></li>
+		<li><a class="anbu-tab" data-anbu-tab="anbu-checkpoints">Time <span class="anbu-count"><?php echo round($profiler->getLoadTime() / 1000, 3); ?> sec</span></a></li>
 		<li><a class="anbu-tab">Memory <span class="anbu-count"><?php echo $profiler->getMemoryUsage(); ?> (<?php echo $profiler->getMemoryPeak(); ?>)</span></a></li>
-		<li><a class="anbu-tab" data-anbu-tab="anbu-filecount">Files <span class="anbu-count"><?php echo count($profiler->getIncludedFiles()); ?></span></a></li>        
+		<li><a class="anbu-tab" data-anbu-tab="anbu-filecount">Files <span class="anbu-count"><?php echo count($profiler->getIncludedFiles()); ?></span></a></li>
+		<li><a class="anbu-tab" data-anbu-tab="anbu-session">Session <span class="anbu-count"><?php echo count(Session::all()); ?></span></a></li>
 		<li class="anbu-tab-right"><a id="anbu-hide" href="#">&#8614;</a></li>
 		<li class="anbu-tab-right"><a id="anbu-close" href="#">&times;</a></li>
 		<li class="anbu-tab-right"><a id="anbu-zoom" href="#">&#8645;</a></li>
