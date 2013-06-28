@@ -1,23 +1,23 @@
 {
-    "name": "paulboco/profiler",
-    "description": "A PHP 5.3 profiler based off of Laravel 3's Anbu.",
-    "keywords": ["profiler", "laravel", "anbu"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Dayle Rees"
-        },
-        {
-            "name": "Loic Sharma"
-        }
-    ],
-    "require": {
-        "php": ">=5.3.0",
-    	"psr/log": "1.0.*"
-    },
-    "autoload": {
-        "psr-0": {
-            "Profiler": "src/"
-        }
-    }
+	"name": "paulboco/profiler",
+	"description": "A PHP 5.3 profiler based off of Laravel 3's Anbu.",
+	"keywords": ["profiler", "laravel", "anbu"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Dayle Rees"
+		},
+		{
+			"name": "Loic Sharma"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0",
+		"psr/log": "1.0.*"
+	},
+	"autoload": {
+		"psr-0": {
+			"Profiler": "src/"
+		}
+	}
 }

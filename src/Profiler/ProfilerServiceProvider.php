@@ -28,6 +28,8 @@ class ProfilerServiceProvider extends ServiceProvider {
 		$this->registerProfilerRouting();
 
 		$this->registerProfilerToOutput();
+
+		$this->listenViewComposing();
 	}
 
 	/**
@@ -185,6 +187,19 @@ class ProfilerServiceProvider extends ServiceProvider {
 			}
 
 			$response->setContent($responseContent);
+		});
+	}
+
+	/**
+	 * Listen to view composing events
+	 *
+	 * @return void
+	 */
+	protected function listenViewComposing()
+	{
+		$this->app['events']->listen('composing:*', function ($data)
+		{
+			$this->app['profiler']->setViewData($data->getData());
 		});
 	}
 

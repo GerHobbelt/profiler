@@ -5,6 +5,8 @@ use Psr\Log\LoggerAwareInterface;
 
 class Profiler implements LoggerAwareInterface {
 
+	protected $view_data = array();
+
 	/**
 	 * Wether the profiler is enabled or not.
 	 *
@@ -246,6 +248,73 @@ class Profiler implements LoggerAwareInterface {
 	}
 
 	/**
+	 * Sets View data if it meets certain criteria
+	 *
+	 * @param array $data
+	 * @return void
+	 */
+	public function setViewData($data)
+	{
+		foreach($data as $key => $value)
+		{
+			if (! is_object($value))
+			{
+				$this->addKeyToData($key, $value);
+			}
+			else if(method_exists($value, 'toArray'))
+			{
+				$this->addKeyToData($key, $value->toArray());
+			}
+			else
+			{
+				$this->addKeyToData($key, 'Object');
+			}
+		}
+	}
+
+	/**
+	 * Adds data to the array if key isn't set
+	 *
+	 * @param string $key
+	 * @param string|array $value
+	 * @return void
+	 */
+	protected function addKeyToData($key, $value)
+	{
+		if (is_array($value))
+		{
+			if(!isset($this->view_data[$key]) or (is_array($this->view_data[$key]) and !in_array($value, $this->view_data[$key])))
+			{
+				$this->view_data[$key][] = $value;
+			}
+		}
+		else
+		{
+			$this->view_data[$key] = $value;
+		}
+	}
+
+	/**
+	 * Cleans an entire array (escapes HTML)
+	 *
+	 * @param array $data
+	 * @return array
+	 */
+	public function cleanArray($data)
+	{
+		array_walk_recursive($data, function (&$data)
+		{
+			if (!is_object($data))
+			{
+				$data = htmlspecialchars($data);
+			}
+		});
+
+		return $data;
+	}
+
+
+	/**
 	 * Render the profiler.
 	 *
 	 * @return string
@@ -257,6 +326,7 @@ class Profiler implements LoggerAwareInterface {
 			$profiler = $this;
 			$logger = $this->log;
 			$assetPath = __DIR__.'/../../assets/';
+			$view_data = $this->view_data;
 
 			ob_start();
 

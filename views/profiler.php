@@ -3,6 +3,40 @@
 <div class="anbu">
 	<div class="anbu-window">
 		<div class="anbu-content-area">
+			<div class="anbu-tab-pane anbu-table anbu-environment">
+				<table>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>
+					</tr>
+					<tr>
+						<td>Timezone</td>
+						<td><?php echo Config::get('app.timezone') ?></td>
+					</tr>
+					<tr>
+						<td>Locale</td>
+						<td><?php echo Config::get('app.locale') ?></td>
+					</tr>
+				</table>
+			</div>
+
+			<div class="anbu-tab-pane anbu-table anbu-controller">
+				<table>
+					<tr>
+						<th>Key</th>
+						<th>Value</th>
+					</tr>
+					<tr>
+						<td>Current route</td>
+						<td><?php echo Route::currentRouteName() ?></td>
+					</tr>
+					<tr>
+						<td>Current controller action</td>
+						<td><?php echo Route::currentRouteAction() ?></td>
+					</tr>
+				</table>
+			</div>
+
 			<div class="anbu-tab-pane anbu-table anbu-log">
 				<?php if(count($logger->getLogs()) > 0): ?>
 					<table>
@@ -24,6 +58,39 @@
 				<?php else: ?>
 					<span class="anbu-empty">There are no log entries.</span>
 				<?php endif; ?>
+			</div>
+
+			<div class="anbu-tab-pane anbu-table anbu-checkpoints">
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Running Time (ms)</th>
+					</tr>
+					<?php foreach($profiler->getTimers() as $name => $timer): ?>
+					<tr>
+						<td class="anbu-table-first">
+							<?php echo $name; ?>
+						</td>
+						<td><pre><?php echo $timer->getElapsedTime(); ?>ms</pre></td>
+						<td>&nbsp;</td>
+					</tr>
+
+					<?php endforeach; ?>
+				</table>
+			</div>
+
+			<div class="anbu-tab-pane anbu-table anbu-routes">
+				<table>
+				    <tr>
+				        <th>Routes</th>
+				    </tr>
+					<?php $routes = Route::getRoutes(); ?>
+				    <?php foreach ($routes as $name => $route): ?>
+						<tr>
+							<td><?php echo $name ?></td>
+						</tr>
+				    <?php endforeach ?>
+				</table>
 			</div>
 
 			<div class="anbu-tab-pane anbu-table anbu-sql">
@@ -49,18 +116,16 @@
 				<?php endif; ?>
 			</div>
 
-			<div class="anbu-tab-pane anbu-table anbu-checkpoints">
+			<div class="anbu-tab-pane anbu-table anbu-filecount">
 				<table>
 					<tr>
-						<th>Name</th>
-						<th>Running Time (ms)</th>
+						<th>File</th>
+						<th>Size</th>
 					</tr>
-					<?php foreach($profiler->getTimers() as $name => $timer): ?>
+					<?php foreach($profiler->getIncludedFiles() as $file): ?>
 					<tr>
-						<td class="anbu-table-first">
-							<?php echo $name; ?>
-						</td>
-						<td><pre><?php echo $timer->getElapsedTime(); ?>ms</pre></td>
+						<td class="anbu-table-first-wide"><?php echo $file['filePath']; ?></td>
+						<td><pre><?php echo $file['size']?></pre></td>
 						<td>&nbsp;</td>
 					</tr>
 
@@ -95,27 +160,37 @@
 				<?php endif ?>
 			</div>
 
-			<div class="anbu-tab-pane anbu-table anbu-filecount">
+			<div class="anbu-tab-pane anbu-table anbu-view">
 				<table>
 					<tr>
-						<th>File</th>
-						<th>Size</th>
+						<th>Variable</th>
+						<th>Value</th>
 					</tr>
-					<?php foreach($profiler->getIncludedFiles() as $file): ?>
-					<tr>
-						<td class="anbu-table-first-wide"><?php echo $file['filePath']; ?></td>
-						<td><pre><?php echo $file['size']?></pre></td>
-						<td>&nbsp;</td>
-					</tr>
-
-					<?php endforeach; ?>
+					<?php //$view_data = $profiler::getViewData() ?>
+					<?php foreach($view_data as $key => $value): ?>
+						<tr>
+							<td><?php echo $key ?></td>
+							<?php if($is_array = is_array($value)): ?>
+								<?php $value = Profiler::cleanArray($value) ?>
+								<td><pre><?php echo print_r($value, true) ?></pre></td>
+							<?php else: ?>
+								<td><?php echo $value ?></td>
+							<?php endif ?>
+						</tr>
+					<?php endforeach ?>
 				</table>
 			</div>
 		</div>
 	</div>
 
 	<ul id="anbu-open-tabs" class="anbu-tabs">
+		<li><a data-anbu-tab="anbu-environment" class="anbu-tab" href="#">Env <span class="anbu-count"><?php echo App::environment() ?></span></a></li>
+		<li><a data-anbu-tab="anbu-controller" class="anbu-tab" href="#">Controller <span class="anbu-count"><?php echo Route::currentRouteAction() ?></span></a></li>
 		<li><a data-anbu-tab="anbu-log" class="anbu-tab" href="#">Log <span class="anbu-count"><?php echo count($logger->getLogs()); ?></span></a></li>
+		<li><a class="anbu-tab" data-anbu-tab="anbu-checkpoints">Time <span class="anbu-count"><?php echo round($profiler->getLoadTime() / 1000, 3); ?> sec</span></a></li>
+		<li><a class="anbu-tab">Memory <span class="anbu-count"><?php echo $profiler->getMemoryUsage(); ?> (<?php echo $profiler->getMemoryPeak(); ?>)</span></a></li>
+		<br>
+		<li><a data-anbu-tab="anbu-routes" class="anbu-tab" href="#">Routes <span class="anbu-count"><?php echo count(Route::getRoutes()) ?></span></a></li>
 		<li>
 			<a data-anbu-tab="anbu-sql" class="anbu-tab" href="#">SQL
 				<span class="anbu-count"><?php echo count($logger->getQueries()); ?></span>
@@ -124,10 +199,9 @@
 				<?php endif; ?>
 			</a>
 		</li>
-		<li><a class="anbu-tab" data-anbu-tab="anbu-checkpoints">Time <span class="anbu-count"><?php echo round($profiler->getLoadTime() / 1000, 3); ?> sec</span></a></li>
-		<li><a class="anbu-tab">Memory <span class="anbu-count"><?php echo $profiler->getMemoryUsage(); ?> (<?php echo $profiler->getMemoryPeak(); ?>)</span></a></li>
 		<li><a class="anbu-tab" data-anbu-tab="anbu-filecount">Files <span class="anbu-count"><?php echo count($profiler->getIncludedFiles()); ?></span></a></li>
 		<li><a class="anbu-tab" data-anbu-tab="anbu-session">Session <span class="anbu-count"><?php echo count(Session::all()); ?></span></a></li>
+		<li><a class="anbu-tab" data-anbu-tab="anbu-view">View <span class="anbu-count"><?php echo count($view_data) ?></span></a></li>
 		<li class="anbu-tab-right"><a id="anbu-hide" href="#">&#8614;</a></li>
 		<li class="anbu-tab-right"><a id="anbu-close" href="#">&times;</a></li>
 		<li class="anbu-tab-right"><a id="anbu-zoom" href="#">&#8645;</a></li>
