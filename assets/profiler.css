@@ -87,7 +87,7 @@
 .anbu-tabs a.anbu-active-tab
 {
 	color:#fff !important;
-	background-color:#333 !important;
+	background-color:#775 !important;
 }
 
 .anbu a:focus
@@ -211,6 +211,12 @@ span.anbu-count
 	-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
 
 }
+
+.anbu-tabs a.anbu-active-tab span.anbu-count
+{
+	background-color:#775 !important;
+}
+
 
 .anbu-empty
 {
