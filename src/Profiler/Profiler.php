@@ -257,17 +257,24 @@ class Profiler implements LoggerAwareInterface {
 	{
 		foreach($data as $key => $value)
 		{
-			if (! is_object($value))
+			if (is_object($value))
+			{
+				if(method_exists($value, 'toArray'))
+				{
+					$this->addKeyToData($key, $value->toArray());
+				}
+				else
+				{
+					$this->addKeyToData($key, get_class($value));
+				}
+			}
+			elseif (is_array($value))
 			{
 				$this->addKeyToData($key, $value);
 			}
-			else if(method_exists($value, 'toArray'))
-			{
-				$this->addKeyToData($key, $value->toArray());
-			}
 			else
 			{
-				$this->addKeyToData($key, 'Object');
+				$this->addKeyToData($key, "'$value'");
 			}
 		}
 	}

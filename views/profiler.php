@@ -170,7 +170,7 @@
 					<?php foreach($view_data as $key => $value): ?>
 						<tr>
 							<td><?php echo $key ?></td>
-							<?php if($is_array = is_array($value)): ?>
+							<?php if(is_array($value)): ?>
 								<?php $value = Profiler::cleanArray($value) ?>
 								<td><pre><?php echo print_r($value, true) ?></pre></td>
 							<?php else: ?>
