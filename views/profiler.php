@@ -93,6 +93,17 @@
 				</table>
 			</div>
 
+			<div class="anbu-tab-pane anbu-table anbu-services">
+				<table>
+				    <tr>
+				        <th>Service Providers</th>
+				    </tr>
+					<tr>
+						<td><pre><?php echo var_export(json_decode(file_get_contents(storage_path() . '/meta/services.json'))) ?></pre></td>
+					</tr>
+				</table>
+			</div>
+
 			<div class="anbu-tab-pane anbu-table anbu-sql">
 				<?php if (count($logger->getQueries()) > 0): ?>
 					<table>
@@ -191,6 +202,7 @@
 		<li><a class="anbu-tab">Memory <span class="anbu-count"><?php echo $profiler->getMemoryUsage(); ?> (<?php echo $profiler->getMemoryPeak(); ?>)</span></a></li>
 		<br>
 		<li><a data-anbu-tab="anbu-routes" class="anbu-tab" href="#">Routes <span class="anbu-count"><?php echo count(Route::getRoutes()) ?></span></a></li>
+		<li><a data-anbu-tab="anbu-services" class="anbu-tab" href="#">Service Providers</a></li>
 		<li>
 			<a data-anbu-tab="anbu-sql" class="anbu-tab" href="#">SQL
 				<span class="anbu-count"><?php echo count($logger->getQueries()); ?></span>
